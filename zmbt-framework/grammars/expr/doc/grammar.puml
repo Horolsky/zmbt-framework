@@ -1,0 +1,35 @@
+@startebnf expr
+
+!define OB "("
+!define CB ")"
+!define OO "{"
+!define CO "}"
+!define OA "["
+!define CA "]"
+!define NS ":"
+!define VS ","
+
+
+!define REST(x) {VS, x}-
+!define ONEORMORE(x) x, [REST(x)]
+
+!define KLEENE(term, sep) [term, [{sep, term}-, [sep]]]
+
+
+expression = value | function ;
+function = keyword, [OB, ONEORMORE(expression), CB];
+
+value = placeholder | object | array | string | number | "false" | "null" | "true";
+
+
+array = OA, KLEENE(value, VS), CA ;
+object = OO, KLEENE(kv-pair, VS), CO ;
+kv-pair = (identifier | string | placeholder), NS, value;
+identifier = ?[_a-zA-Z][-_a-zA-Z0-9]{0,512}?;
+placeholder = "$", (identifier | (OO, identifier, CO) | (OO, Q, char-seq, Q, CO));
+string = Q, [char-seq], {placeholder, [char-seq]}, Q;
+
+char-seq = { ?[^$"]   ? | ?\[$"]? }-;
+
+Q =  '"';
+@endebnf

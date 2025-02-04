@@ -1,0 +1,25 @@
+# (c) Copyright 2025 Zenseact AB
+
+cc_library(
+    name = "lib_expr",
+    visibility = ["//visibility:public"],
+    srcs = glob([
+        "src/*.cpp",
+    ]),
+    hdrs = glob([
+        "*.hpp",
+    ]),
+    deps = [
+        "@boost//:json",
+        "@boost//:spirit",
+    ],
+)
+
+cc_test(
+    name = "test",
+    srcs = ["test/test_keyword.cpp"],
+    deps = [
+        ":lib_expr",
+        "//zmbt-framework/backends/cxx:main_boost",
+    ],
+)
