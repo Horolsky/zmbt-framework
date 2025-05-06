@@ -298,18 +298,18 @@ std::vector<TestEvalSample> const TestSamples
 
     {Arange                     , 4                     , {0,1,2,3}             },
     {Arange                     , L{4}                  , {0,1,2,3}             },
-    {Arange << 4                , nullptr               , {0,1,2,3}             },
+    {4|Arange                , nullptr               , {0,1,2,3}             },
     {Arange                     , "2:6"                 , {2,3,4,5}             },
-    {Arange << "2:6"            , nullptr               , {2,3,4,5}             },
-    {Arange << "1:9:2"          , nullptr               , {1,3,5,7}             },
-    {Arange << "5:1:-1"         , nullptr               , {5,4,3,2}             },
+    {"2:6"   |Arange         , nullptr               , {2,3,4,5}             },
+    {"1:9:2" |Arange         , nullptr               , {1,3,5,7}             },
+    {"5:1:-1"|Arange         , nullptr               , {5,4,3,2}             },
 
-    {Arange << L{2,6}           , nullptr               , {2,3,4,5}             },
-    {Arange << L{1,9,2}         , nullptr               , {1,3,5,7}             },
-    {Arange << L{5,1,-1}        , nullptr               , {5,4,3,2}             },
+    {L{2,6}   |Arange        , nullptr               , {2,3,4,5}             },
+    {L{1,9,2} |Arange        , nullptr               , {1,3,5,7}             },
+    {L{5,1,-1}|Arange        , nullptr               , {5,4,3,2}             },
 
-    {Arange << 0                , nullptr               , L{}                   },
-    {Arange << "1:9:-1"         , nullptr               , L{}                   },
+    {0        | Arange       , nullptr               , L{}                   },
+    {"1:9:-1" | Arange       , nullptr               , L{}                   },
 
 
     {Items                      , {{"a", 1}, {"b", 2}}  , {L{"a", 1}, L{"b", 2}}},
@@ -433,14 +433,12 @@ std::vector<TestEvalSample> const TestSamples
     {Erfc                       , 1.0/3                 , std::erfc(1.0/3)      },
     {Gamma                      , 1.0/3                 , std::tgamma(1.0/3)    },
 
-    // apply fn
-    {Apply(Add(2), 3)           , {}                    , 5                     },
-    {Apply(Pow(2), 3)           , {}                    , 9                     },
-    {Add(2) << 3                , {}                    , 5                     },
-    {Pow(2) << 3                , {}                    , 9                     },
+    // compose const and fn
+    {3|Add(2)                   , {}                    , 5                     },
+    {3|Pow(2)                   , {}                    , 9                     },
 
     // eval operator yields literal which interpreted as C(x)
-    {Add(-1) >> 2               , {}                    , 1                    },
+    {2|Add(-1)                  , {}                    , 1                    },
 
     {Repeat(4)                  ,  1                    , {1,1,1,1}             },
     {Repeat(3)                  , 42                    , {42,42,42}            },
@@ -849,20 +847,13 @@ BOOST_AUTO_TEST_CASE(SerializationSpeed, *utf::timeout(1))
 }
 
 
-BOOST_AUTO_TEST_CASE(TestApplyShift)
-{
-    // << has higher precedence than |
-    BOOST_CHECK_EQUAL(Add(2) << 2 | Eq(4), Compose(Eq(4), Apply(Add(2), 2)));
-    BOOST_CHECK_EQUAL((Add(2) << 2 | Eq(4)).eval(), true);
-}
-
 BOOST_AUTO_TEST_CASE(TestEvalShift)
 {
-    // << has higher precedence than |
-    BOOST_CHECK_EQUAL(Add(2) >> 2, 4);
-    BOOST_CHECK_EQUAL((Add >> L{2,2}), 4);
+    // * has higher precedence than |
+    BOOST_CHECK_EQUAL(Add(2) * 2, 4);
+    BOOST_CHECK_EQUAL((Add * L{2,2}), 4);
 
-    BOOST_CHECK_EQUAL(True >> Null, true);
+    BOOST_CHECK_EQUAL(True * Null, true);
 }
 
 

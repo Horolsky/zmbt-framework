@@ -20,19 +20,19 @@ Expression keywords are grouped by their resulting arity, counting both design-t
 General syntax: `Keyword` or `#!ts Keyword(<Expression list>...)`, where the second form is a design-time parametrization, but not yet an evaluation.
 Both forms yield a `Expression` object with an `eval` method, used by the framework at runtime.
 
-The `>>` operator is syntactic sugar for `eval`, and is used in examples below for brevity.
+The `*` operator is syntactic sugar for `eval`, and is used in examples below for brevity.
 
 
 |Form    | Resulting Expression Type                                  |Example                              |
 |--------|-------------------------------------------------------     |------------------------------------ |
-|Const   |$E^C            \mapsto (x \mapsto C)$                      |`#!js Pi >> null = 3.1415...        `|
-|Unary   |$E^f            \mapsto (x \mapsto f(x))$                   |`#!js Sin >>` $\frac{\pi}{2}$ `= 1  `|
-|Binary₁ |$E^*            \mapsto ([x, y] \mapsto x * y )$            |`#!js Add >> [2,2] = 4              `|
-|Binary₂ |$E^*(y)         \mapsto (x \mapsto x * y      )$            |`#!js Eq(42) >> 13 = ⊥              `|
-|Binary₃ |$E^*            \mapsto (x \mapsto x * default)$            |`#!js Max >> [-1,1] = 1             `|
-|Ternary |$E^f(a, b)      \mapsto (x \mapsto f(a, b)(x))$             |`#!js Recur(Pow(2), 4) >> 4 = 65536 `|
-|Variadic|$E^f(a,b,c,...) \mapsto (x \mapsto f(a,b,c,...)(x))$        |`#!js All(Gt(5), Le(6)) >> 6 = ⊤    `|
-|Literal₁|Evaluated as is where a value is expected                   |`#!js Map(Eq(0)) ≢ Map(0)           `|
+|Const   |$E^C            \mapsto (x \mapsto C)$                      |`#!js Pi * null = 3.1415...        `|
+|Unary   |$E^f            \mapsto (x \mapsto f(x))$                   |`#!js Sin *` $\frac{\pi}{2}$ `= 1  `|
+|Binary₁ |$E^*            \mapsto ([x, y] \mapsto x * y )$            |`#!js Add * [2,2] = 4              `|
+|Binary₂ |$E^*(y)         \mapsto (x \mapsto x * y      )$            |`#!js Eq(42) * 13 = ⊥              `|
+|Binary₃ |$E^*            \mapsto (x \mapsto x * default)$            |`#!js Max * [-1,1] = 1             `|
+|Ternary |$E^f(a, b)      \mapsto (x \mapsto f(a, b)(x))$             |`#!js Recur(Pow(2), 4) * 4 = 65536 `|
+|Variadic|$E^f(a,b,c,...) \mapsto (x \mapsto f(a,b,c,...)(x))$        |`#!js All(Gt(5), Le(6)) * 6 = ⊤    `|
+|Literal₁|Evaluated as Const where a value is expected                |`#!js Map(Eq(0)) ≢ Map(0)           `|
 |Literal₂|Evaluated as `#!ts Eq(value)` where a predicate is expected |`#!js Filter(42) ≡ Filter(Eq(42))   `|
 
 The **Const** keywords creates constant functions. They are syntactically equivalent to **Unary**,
@@ -44,8 +44,8 @@ functor with bound ***right-hand side*** operand. To curry a left-hand side oper
 This is especially useful for non-commutative operators, e.g.:
 
 ```js
-Div(1) >> 2 = 2
-Flip(Div(1)) >> 2 = 0.5
+Div(1) * 2 = 2
+Flip(Div(1)) * 2 = 0.5
 ```
 
 For the **Binary₁** the composition with `Reverse` can be utilized instead of `Flip` to get the proper commutation, as `Flip` swaps the design-time and eval-time arguments, which differs it from Huskell flip.
@@ -54,7 +54,7 @@ The predicates in **Binary₂** form are very similar to GoogleTest matchers, e.
 It may be also helpful for understanding to look this form from OOP perspective, considering it as
 a class method on eval-time argument object. E.g.,
 ```js
-At(1) >> ["foo", 42]
+At(1) * ["foo", 42]
 ```
 is equivalent to
 ```js
@@ -72,8 +72,8 @@ The **Ternary** and **Variadic** keywords, with a few exceptions,+
 follows the same evaluation rule as **Binary1** vs **Binary₂** for cases with no design-time parameters, e.g. variadic
 
 ```js
-Format("Hello", "world") >> "%s, %s!"
-Format >> ["%s, %s!", ["Hello", "world"]]
+Format("Hello", "world") * "%s, %s!"
+Format * ["%s, %s!", ["Hello", "world"]]
 ```
 are both valid and produce the same result.
 
@@ -81,23 +81,21 @@ are both valid and produce the same result.
 
 Several keywords produce high-order expressions that are useful for creating a complex matchers or generators.
 
-The most powerful in this group are `Apply`, `Compose`, and `Pack`, which also can be expressed with
+The most powerful in this group are `Compose` and `Pack`, which also can be expressed with
 overloaded infix operators for brevity (listed in precedence order from highest to lowest):
 
 |Operator|keyword                                      | Description                             |
 |----    |----                                         |-----------                              |
-|<<      |[Apply](/dsl-reference/expressions#apply)    | bind run-time x at design time          |
 |\|      |[Compose](/dsl-reference/expressions#compose)| compose expressions                     |
 |&       |[Pack](/dsl-reference/expressions#pack)      | evaluate and pack results into an array |
 
-Do not confuse the Apply left shift operator `<<` with right shift `>>` which stands for inline evaluation.
 
 Other useful keywords are:
 
 - `Filter`, `Map`, `Reduce` - similar to Python functools, e.g.:
       ```js
       Filter(At(1)|Lt(3)) | Map(At(0))
-         >>
+         *
       [
          [1, "one"  ],
          [3, "two"  ],
@@ -165,7 +163,7 @@ title Expression DSL syntax
 !define REST(x) {CM, x}-
 !define ONEORMORE(x) x, REST(x)
 
-Expression = Literal | (Keyword, [Parameters]) | Compose | Pack | Apply;
+Expression = Literal | (Keyword, [Parameters]) | Compose | Pack;
 Parameters = (LB, Expression, RB)
     | (LB, Expression, CM, Expression, RB)
     | (LB, ONEORMORE(Expression), RB);
@@ -173,7 +171,6 @@ Parameters = (LB, Expression, RB)
 
 Compose = Expression, '|', Expression;
 Pack = Expression, '&', Expression;
-Apply = Expression, '<<', Literal;
 
 @endebnf
 ```

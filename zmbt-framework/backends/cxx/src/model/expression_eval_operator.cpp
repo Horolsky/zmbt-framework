@@ -14,8 +14,6 @@
 #include "zmbt/model/keyword_codegen_type.hpp"
 
 
-#define ASSERT(E)      if (!(E)) { throw zmbt::expression_error("%s#%d - " #E, __FILE__, __LINE__);}
-
 namespace
 {
 
@@ -29,17 +27,19 @@ namespace zmbt {
 
 boost::json::value Expression::eval_UnaryOp(boost::json::value const& x, SignalOperatorHandler const& op) const
 {
-    return op.apply(keyword(), nullptr, x);
+    return op.apply(keyword(), nullptr, Expression(x).eval());
 }
 
 boost::json::value Expression::eval_BinaryOp(boost::json::value const& x, SignalOperatorHandler const& op) const
 {
-    V const* lhs {nullptr}; // binary LHS or functor params
-    V const* rhs {nullptr}; // binary RHS or functor arg
+    V const* lhs {nullptr}; // binary LHS or expr params
+    V const* rhs {nullptr}; // binary RHS or expr arg
     handle_binary_args(x, lhs, rhs);
-    ASSERT(lhs)
-    ASSERT(rhs)
-    return op.apply(keyword(), *lhs, *rhs);
+    if (not (lhs and rhs))
+    {
+        throw zmbt::expression_error("Invalid binary operation: %s << %s", serialize(), x);
+    }
+    return op.apply(keyword(), Expression(*lhs).eval(), Expression(*rhs).eval());
 }
 
 

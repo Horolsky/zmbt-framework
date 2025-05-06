@@ -25,8 +25,9 @@
 
 namespace zmbt {
 
-boost::json::value zmbt::Expression::eval_CodegenFn(boost::json::value const& x, SignalOperatorHandler const&) const
+boost::json::value zmbt::Expression::eval_CodegenFn(boost::json::value const& x_, SignalOperatorHandler const&) const
 {
+    boost::json::value x = Expression(x_).eval();
     switch(keyword())
     {
 @for keyword in data.CodegenFns:
