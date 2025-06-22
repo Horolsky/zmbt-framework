@@ -15,21 +15,36 @@ nodes:
   N_TestTable:  { base: N_Param,      trans: { T_TestRow:         N_TestTable   ,
                                                T_TestComment:     N_TestTable   } }
   N_Test:       { base: N_Param,      trans: { T_Test:            N_TestTable   } }
-  N_Channel:    { base: N_Test,       trans: { T_InjectTo:        N_KindIn      ,
-                                               T_ObserveOn:       N_KindOut     } }
-  N_ChannelOut: { base: N_Test,       trans: { T_ObserveOn:       N_KindOut     } }
-  N_CombineOut: { base: N_Channel,    trans: { T_Union:           N_KindOut     ,
-                                               T_With:            N_KindOut     } }
-  N_EndIn:      { base: N_Channel,    trans: { T_Keep:            N_Channel     } }
-  N_EndOut:     { base: N_CombineOut, trans: { T_Expect:          N_Channel     } }
-  N_AliasIn:    { base: N_EndIn,      trans: { T_Alias:           N_EndIn       } }
-  N_AliasOut:   { base: N_EndOut,     trans: { T_Alias:           N_EndOut      } }
-  N_CallFilter: { base: N_AliasOut,   trans: { T_CallFilter:      N_AliasOut    } }
-  N_DecorIn:    { base: N_AliasIn,    trans: { T_As:              N_AliasIn     } }
-  N_DecorOut:   { base: N_CallFilter, trans: { T_As:              N_CallFilter  } }
-  N_KindIn:     { base: N_DecorIn,    trans: { T_SignalFilter:    N_DecorIn     } }
-  N_KindOut:    { base: N_DecorOut,   trans: { T_SignalFilter:    N_DecorOut    ,
-                                               T_SignalProperty:  N_CallFilter  ,
-                                               T_CallCount:       N_AliasOut    } }
-  N_Repeat:     { base: N_Channel,    trans: { T_Repeat:          N_Channel     } }
+  N_Cnl:        { base: N_Test,       trans: { T_At:              N_Filter      } }
+  N_CnlConj:    { base: N_Test,       trans: { T_And:             N_FilterConj  } }
+  N_CnlDisj:    { base: N_Test,       trans: { T_Or:              N_FilterDisj  } }
+  N_CnlEnd:     { base: null,         trans: { T_Inject:          N_Cnl         ,
+                                               T_Expect:          N_Cnl         ,
+                                               T_And:             N_FilterConj  ,
+                                               T_Or:              N_FilterDisj  } }
+  N_Alias:      { base: N_CnlEnd,     trans: { T_Alias:           N_CnlEnd      } }
+  N_Via:        { base: N_Alias,      trans: { T_Via:             N_Alias       } }
+  N_Decor:      { base: N_Via,        trans: { T_As:              N_Via         } }
+  N_Filter:     { base: N_Decor,      trans: { T_FilterSignal:    N_Decor       ,   # args / ret / except
+                                               T_FilterProperty:  N_Alias       } } # thread / ts / callcount
+  N_CnlEndConj: { base: null,         trans: { T_Inject:          N_Cnl         ,
+                                               T_Expect:          N_Cnl         ,
+                                               T_And:             N_FilterConj  } }
+  N_AliasConj:  { base: N_CnlEndConj, trans: { T_Alias:           N_CnlEndConj  } }
+  N_ViaConj:    { base: N_AliasConj,  trans: { T_Via:             N_AliasConj   } }
+  N_DecorConj:  { base: N_ViaConj,    trans: { T_As:              N_ViaConj     } }
+  N_FilterConj: { base: N_DecorConj,  trans: { T_FilterSignal:    N_DecorConj   ,   # args / ret / except
+                                               T_FilterProperty:  N_AliasConj   } } # threas / ts / callcount
+  N_CnlEndDisj: { base: null,         trans: { T_Inject:          N_Cnl         ,
+                                               T_Expect:          N_Cnl         ,
+                                               T_Or:              N_FilterDisj  } }
+  N_AliasDisj:  { base: N_CnlEndDisj, trans: { T_Alias:           N_CnlEndDisj  } }
+  N_ViaDisj:    { base: N_AliasDisj,  trans: { T_Via:             N_AliasDisj   } }
+  N_DecorDisj:  { base: N_ViaDisj,    trans: { T_As:              N_ViaDisj     } }
+  N_FilterDisj: { base: N_DecorDisj,  trans: { T_FilterSignal:    N_DecorDisj   ,   # args / ret / except
+                                               T_FilterProperty:  N_AliasDisj   } } # threas / ts / callcount
+  N_Repeat:     { base: N_Cnl,        trans: { T_Repeat:          N_Cnl         } }
   N_Main:       { base: null,         trans: { T_OnTrigger:       N_Repeat      } }
+
+params:
+  C: [ '', Conj, Disj ]

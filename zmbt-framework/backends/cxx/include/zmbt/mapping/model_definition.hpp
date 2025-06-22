@@ -41,33 +41,36 @@ class ModelDefinition
     /// T_Alias transition
     template <class Target>
     struct T_Alias;
+    /// T_And transition
+    template <class Target>
+    struct T_And;
     /// T_As transition
     template <class Target>
     struct T_As;
-    /// T_CallCount transition
+    /// T_At transition
     template <class Target>
-    struct T_CallCount;
-    /// T_CallFilter transition
-    template <class Target>
-    struct T_CallFilter;
+    struct T_At;
     /// T_Description transition
     template <class Target>
     struct T_Description;
     /// T_Expect transition
     template <class Target>
     struct T_Expect;
-    /// T_InjectTo transition
+    /// T_FilterProperty transition
     template <class Target>
-    struct T_InjectTo;
-    /// T_Keep transition
+    struct T_FilterProperty;
+    /// T_FilterSignal transition
     template <class Target>
-    struct T_Keep;
-    /// T_ObserveOn transition
+    struct T_FilterSignal;
+    /// T_Inject transition
     template <class Target>
-    struct T_ObserveOn;
+    struct T_Inject;
     /// T_OnTrigger transition
     template <class Target>
     struct T_OnTrigger;
+    /// T_Or transition
+    template <class Target>
+    struct T_Or;
     /// T_Pairwise transition
     template <class Target>
     struct T_Pairwise;
@@ -89,12 +92,6 @@ class ModelDefinition
     /// T_Repeat transition
     template <class Target>
     struct T_Repeat;
-    /// T_SignalFilter transition
-    template <class Target>
-    struct T_SignalFilter;
-    /// T_SignalProperty transition
-    template <class Target>
-    struct T_SignalProperty;
     /// T_Test transition
     template <class Target>
     struct T_Test;
@@ -104,12 +101,9 @@ class ModelDefinition
     /// T_TestRow transition
     template <class Target>
     struct T_TestRow;
-    /// T_Union transition
+    /// T_Via transition
     template <class Target>
-    struct T_Union;
-    /// T_With transition
-    template <class Target>
-    struct T_With;
+    struct T_Via;
     /// T_Zip transition
     template <class Target>
     struct T_Zip;
@@ -129,30 +123,42 @@ class ModelDefinition
     class N_TestTable;
     /// N_Test node
     class N_Test;
-    /// N_Channel node
-    class N_Channel;
-    /// N_ChannelOut node
-    class N_ChannelOut;
-    /// N_CombineOut node
-    class N_CombineOut;
-    /// N_EndIn node
-    class N_EndIn;
-    /// N_EndOut node
-    class N_EndOut;
-    /// N_AliasIn node
-    class N_AliasIn;
-    /// N_AliasOut node
-    class N_AliasOut;
-    /// N_CallFilter node
-    class N_CallFilter;
-    /// N_DecorIn node
-    class N_DecorIn;
-    /// N_DecorOut node
-    class N_DecorOut;
-    /// N_KindIn node
-    class N_KindIn;
-    /// N_KindOut node
-    class N_KindOut;
+    /// N_Cnl node
+    class N_Cnl;
+    /// N_CnlConj node
+    class N_CnlConj;
+    /// N_CnlDisj node
+    class N_CnlDisj;
+    /// N_CnlEnd node
+    class N_CnlEnd;
+    /// N_Alias node
+    class N_Alias;
+    /// N_Via node
+    class N_Via;
+    /// N_Decor node
+    class N_Decor;
+    /// N_Filter node
+    class N_Filter;
+    /// N_CnlEndConj node
+    class N_CnlEndConj;
+    /// N_AliasConj node
+    class N_AliasConj;
+    /// N_ViaConj node
+    class N_ViaConj;
+    /// N_DecorConj node
+    class N_DecorConj;
+    /// N_FilterConj node
+    class N_FilterConj;
+    /// N_CnlEndDisj node
+    class N_CnlEndDisj;
+    /// N_AliasDisj node
+    class N_AliasDisj;
+    /// N_ViaDisj node
+    class N_ViaDisj;
+    /// N_DecorDisj node
+    class N_DecorDisj;
+    /// N_FilterDisj node
+    class N_FilterDisj;
     /// N_Repeat node
     class N_Repeat;
     /// N_Main node
