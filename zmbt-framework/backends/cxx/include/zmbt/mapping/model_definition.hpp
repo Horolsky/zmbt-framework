@@ -59,6 +59,9 @@ class ModelDefinition
     /// T_Filter transition
     template <class Target>
     struct T_Filter;
+    /// T_Map transition
+    template <class Target>
+    struct T_Map;
     /// T_OnTrigger transition
     template <class Target>
     struct T_OnTrigger;
@@ -86,9 +89,6 @@ class ModelDefinition
     /// T_TestRow transition
     template <class Target>
     struct T_TestRow;
-    /// T_Via transition
-    template <class Target>
-    struct T_Via;
 
 // NODES forward declarations
     /// N_Descr node
