@@ -209,7 +209,7 @@ struct ModelDefinition::T_As : protected virtual ModelDefinition::BaseTransition
 template <class Target>
 struct ModelDefinition::T_Via : protected virtual ModelDefinition::BaseTransition
 {
-    /// Apply pre/post transformation
+    /// Set the pre/post transformation on channel signal
     Target Via(lang::Expression const& expr)
     {
         state().cur_channel()["transform"] = expr;
@@ -221,6 +221,7 @@ struct ModelDefinition::T_Via : protected virtual ModelDefinition::BaseTransitio
 template <class Target>
 struct ModelDefinition::T_Alias : protected virtual ModelDefinition::BaseTransition
 {
+    /// Set channel Alias
     Target Alias(boost::json::string_view alias)
     {
         state().cur_channel()["alias"] = alias;
